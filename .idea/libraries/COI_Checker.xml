@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="COI_Checker">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/COI_Checker.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
