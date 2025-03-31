@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 =======
 # The VerCoI approach
 <img src="https://github.com/user-attachments/assets/b494dc5c-2037-4d4f-9c31-9561939da599" width="400">
