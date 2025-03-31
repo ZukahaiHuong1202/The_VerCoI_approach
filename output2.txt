@@ -1,0 +1,12 @@
+Rule   Subject                   Object                         Action               Effect    
+-------------------------------------------------------------------------------------------------
+R1     N/A                       N/A                            N/A                  Deny      
+R2     N/A                       N/A                            N/A                  Deny      
+R3     N/A                       N/A                            N/A                  Deny      
+R4     N/A                       N/A                            N/A                  Deny      
+R5     N/A                       N/A                            N/A                  Deny      
+R6     N/A                       N/A                            N/A                  Deny      
+R7     N/A                       N/A                            N/A                  Deny      
+R8     N/A                       N/A                            N/A                  Deny      
+R9     N/A                       N/A                            N/A                  Deny      
+R10    N/A                       N/A                            N/A                  Deny      

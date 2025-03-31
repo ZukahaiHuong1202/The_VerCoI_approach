@@ -19,20 +19,17 @@ public class ConflictChecker {
     public static RoleBasedAccessControl roleBasedAccessControl = new RoleBasedAccessControl();
 
     // Thay đổi để nhận đường dẫn file từ tham số
-    public static void checkFileForConflicts(JTextArea resultArea, String filePath) throws IOException, ParserConfigurationException, SAXException {
-
-
-
+    public static void checkFileForConflicts(JTextArea resultArea, JTextArea resultAreaABAC, String filePath) throws IOException, ParserConfigurationException, SAXException {
 
         // Kiểm tra phần mở rộng của file
         if (!filePath.endsWith(".xacml")) {
-            resultArea.setText("Lỗi: Chỉ hỗ trợ đọc file .xacml!");
+            resultArea.setText("ERROR: Support \".xacml\" format File only!");
             return; // Dừng việc đọc file nếu không phải là file .xacml
         }
 
         // Kiểm tra nếu file là XACML (XML hợp lệ)
         if (!isValidXacmlFile(filePath)) {
-            resultArea.setText("Lỗi: File không phải là định dạng XACML hợp lệ.");
+            resultArea.setText("ERROR: File has invalid \".xacml\" format.");
             return;
         }
 
@@ -145,40 +142,63 @@ public class ConflictChecker {
         writer.close();
     }
     private static void checkConflicts(JTextArea resultArea) {
-
-        Map<Integer,User> MapUsers = roleBasedAccessControl.MapUsers;
-
+        Map<Integer, user> MapUsers = roleBasedAccessControl.MapUsers;
         if (DataMap.size() != MapUsers.size()) {
-            resultArea.setText("Mô tả sai, không chính xác về số lượng trường, thuộc tính !");
+            resultArea.setText("❌ Wrong description of number of fields and properties !");
             return;
         }
 
-        for (Map.Entry<Integer,User> entryMotaText : MapUsers.entrySet()) {
-            for (Map.Entry<Integer,OtherUser> entryText : DataMap.entrySet()) {
+        for (Map.Entry<Integer, user> entryMotaText : MapUsers.entrySet()) {
+            Integer key = entryMotaText.getKey();
+            user user1 = entryMotaText.getValue();
+            OtherUser user2 = DataMap.get(key);
 
-                if (!entryText.getKey().equals(entryMotaText.getKey())) {
-                    continue;
-                }
-                if (!entryText.getValue().username.equals(entryMotaText.getValue().getUsername())) {
-                    resultArea.setText("Mô tả sai Username của "+ entryText.getValue().username +" !");
-                    return;
-                }
-                if (!entryText.getValue().roleAssignment.equals(entryMotaText.getValue().getRole().toString())) {
-                    resultArea.setText("Mô tả sai Role của "+ entryText.getValue().username +" !");
-                    return;
-                }
-                if (!entryText.getValue().permissionAssignments.equals(String.join(",",entryMotaText.getValue().getPermissions()))) {
-                    resultArea.setText("Mô tả sai Permission của "+ entryText.getValue().username +" !");
-                    return;
-                }
-                if (!entryText.getValue().roleConflicts.equals(String.join(",",entryMotaText.getValue().getRoleConflicts()))) {
-                    resultArea.setText("Mô tả sai RoleConflicts của "+ entryText.getValue().username +" !");
-                    return;
-                }
+            if (user2 == null) {
+                resultArea.setText("❌ No user found corresponding to key: " + key);
+                logError(key, "key_not_found", resultArea,user1);
+                return;
+            }
+
+            if (!user1.getUsername().equals(user2.username)) {
+                resultArea.setText("❌ Incorrect Username Description of " + user2.username + "!");
+                logError(key, "username", resultArea,user1);
+                return;
+            }
+
+            if (!user1.getRole().toString().equals(user2.roleAssignment)) {
+                resultArea.setText("❌ Incorrect Role Description of " + user2.username + "!");
+                logError(key, "role", resultArea,user1);
+                return;
+            }
+
+            if (!String.join(",", user1.getPermissions()).equals(user2.permissionAssignments)) {
+                resultArea.setText("❌ Incorrect Permission Description of " + user2.username + "!");
+                logError(key, "permissions", resultArea,user1);
+                return;
+            }
+
+            if (!String.join(",", user1.getRoleConflicts()).equals(user2.roleConflicts)) {
+                resultArea.setText("❌ Incorrect RoleConflicts Description of " + user2.username + "!");
+                logError(key, "roleConflicts", resultArea,user1);
+                return;
             }
         }
-        resultArea.setText("Gán dữ liệu chuẩn chỉ !");
+
+        resultArea.setText("✅ Assign correct data!");
     }
+
+    private static void logError(Integer key, String fieldName, JTextArea resultArea, user user) {
+
+        String location = user.getLocation(); // Lấy vị trí tạo User
+
+        resultArea.append("\n📍 Error in User: " + ++key);
+        resultArea.append("\n🔑 Error Field: " + fieldName);
+        resultArea.append("\n📝 Error Position: " + location);
+//        System.out.println("📍 Lỗi xảy ra tại User thứ " + key);
+//        System.out.println("🔑 Trường lỗi: " + fieldName);
+//        System.out.println("📝 Vị trí lỗi: " + location);
+    }
+
     public static void main(String[] args) {
 
         new SwingApp();
